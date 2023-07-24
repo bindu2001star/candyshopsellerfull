@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <form action='/submit-details' method="post">
+        <h1>CANDY SHOP SELLER</h1>
+        <label>CandyName:</label>
+        <input type="text" id="candyname" name="candyname">
+        <label>Description:</label>
+        <input type="text" id="description" name="description">
+        <label>Price:</label>
+        <input type="number" id="price" name="price">
+        <label>quantity:</label>
+        <input type="number" id="quantity" name="quantity">
+        <button type="submit">Add Item</button>
+    </form>
+    <ul id="list"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            fetch('/get-detail')
+                .then(response => response.json())
+                .then((data) => {
+                    data.forEach(candies => {
+                        showuseronscreen(candies);
+                    });
+                })
+                .catch(error => {
+                    console.log('error fetching data on screen', error);
+                });
+        })
+        function showuseronscreen(candies) {
+            const candieslist = document.getElementById('list');
+            const li = document.createElement('li');
+            const candyId = `candies-${candies.id}`;
+            li.textContent = `CandyName:${candies.candyname}-Description:${candies.description}-price:${candies.price}-quantity:${candies.quantity}`;
+            candieslist.appendChild(li);
+            const buy1 = document.createElement('input');
+            buy1.type = 'button';
+            buy1.value = 'Buy 1';
+            buy1.onclick = () => {
+                if (candies.quantity <= 0) {
+                    li.textContent = "no more candies";
+                }
+
+                else {
+                    const updatedcandyname = candies.candyname;
+                    const updateddescription = candies.description;
+                    const updatedprice = candies.price;
+                    const updatedquantity = candies.quantity - 1;
+
+                    const obj = {
+                        id: candies.id,
+                        candyname: updatedcandyname,
+                        description: updateddescription,
+                        price: updatedprice,
+                        quantity: updatedquantity
+                    };
+                    axios.put(`http://localhost:6500/candy/editquantity/${candies.id}`, obj)
+                        .then((response) => {
+                            console.log("values changed", obj)
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.log('error editing', error)
+                        })
+
+                }
+
+            }
+            const buy2 = document.createElement('input');
+            buy2.type = 'button';
+            buy2.value = 'Buy 2';
+            buy2.onclick = () => {
+                if (candies.quantity <= 0) {
+                    li.textContent = "no more candies";
+                }
+                else if (candies.quantity < 2) {
+                    li.textContent = "need more candies";
+                }
+                else {
+                    const updatedcandyname = candies.candyname;
+                    const updateddescription = candies.description;
+                    const updatedprice = candies.price;
+                    const updatedquantity = candies.quantity - 2;
+
+                    const obj = {
+                        id: candies.id,
+                        candyname: updatedcandyname,
+                        description: updateddescription,
+                        price: updatedprice,
+                        quantity: updatedquantity
+                    };
+                    axios.put(`http://localhost:6500/candy/editquantity/${candies.id}`, obj)
+                        .then((response) => {
+                            console.log("values changed", obj)
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.log('error editing', error)
+                        })
+
+                }
+
+            }
+            const buy4 = document.createElement('input');
+            buy4.type = 'button';
+            buy4.value = 'Buy 4';
+            buy4.onclick = () => {
+                if (candies.quantity <= 0) {
+                    li.textContent = "no more candies";
+                }
+                else if (candies.quantity < 4) {
+                    li.textContent = "candies are insufficient";
+                }
+                else {
+                    const updatedcandyname = candies.candyname;
+                    const updateddescription = candies.description;
+                    const updatedprice = candies.price;
+                    const updatedquantity = candies.quantity - 4;
+
+                    const obj = {
+                        id: candies.id,
+                        candyname: updatedcandyname,
+                        description: updateddescription,
+                        price: updatedprice,
+                        quantity: updatedquantity
+                    };
+                    axios.put(`http://localhost:6500/candy/editquantity/${candies.id}`, obj)
+                        .then((response) => {
+                            console.log("values changed", obj)
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.log('error editing', error)
+                        })
+
+                }
+            }
+            const deletbtn = document.createElement('input');
+            deletbtn.value = "Delete";
+            deletbtn.type = 'button';
+            deletbtn.onclick = () => {
+                console.log("deleting the candy", candies.id);
+                fetch(`/candy/deleteitem/${candies.id}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => response.json())
+                    .then((data) => {
+                        location.reload();
+                        //console.log(data,"123");
+                        //  const formData = document.getElementById('list');
+                        //  const deletele = document.getElementById(`li[id=${candyId}]`);
+                        //  formData.remove(deletele);
+
+                    });
+
+            }
+            li.appendChild(buy1);
+            li.appendChild(buy2);
+            li.appendChild(buy4);
+            li.appendChild(deletbtn);
+
+        }
+    </script>
+</body>
+
+</html>
